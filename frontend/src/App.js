@@ -4,6 +4,7 @@ import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
 import Layout from './components/Layout';
+import ReceiptSubmit from './components/ReceiptSubmit';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route index element={<Home />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login/>} />
+      <Route path="/receiptsubmit" element={<ReceiptSubmit/>} />
     </Routes>
     </BrowserRouter>
   );

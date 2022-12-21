@@ -1,15 +1,17 @@
 import json
 
 from django.shortcuts import render, get_object_or_404
+from django.core import serializers
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from .models import Receipt
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import os
 from django.contrib.auth.decorators import login_required
-
+import base64
 from dotenv import load_dotenv
-import google.auth
+from django.core.files.base import ContentFile
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -30,24 +32,40 @@ service = build('sheets', 'v4', credentials=credentials)
 
 
 # Create a new receipt
+@csrf_exempt
 def create_receipt(request):
     # Parse the JSON object from the POST request
-    data = json.loads(request.body)
+    try:
+        data = request.body
 
-    # Create a new Receipt instance
-    receipt = Receipt(
-        person_name=data["person_name"],
-        person_email=data["person_email"],
-        total_amount=data["total_amount"],
-        date=data["date"],
-        image=ContentFile(base64.b64decode(
-            data["image"]), name=data["image_name"]),
-        status="pending",
-    )
+        data = json.loads(data)
+    except json.decoder.JSONDecodeError:
+        return HttpResponse('Invalid request body')
 
-    # Save the Receipt instance to the database
-    receipt.save()
+    try:
+        # Check if the receipt already exists
+        Receipt.objects.get(
+            person_name=data["person_name"],
+            person_email=data["person_email"],
+            total_amount=data["total_amount"],
+            date=data["date"],
+            image=ContentFile(data["image"], name=data["image_name"]),
+            status="pending",
+        )
+        # If the receipt already exists, return a response indicating a duplicate receipt
+        return HttpResponse('Duplicate receipt')
 
+    except Receipt.DoesNotExist:
+        # If the receipt does not exist, create a new receipt and return a response indicating that it was created
+        receipt = Receipt(
+            person_name=data["person_name"],
+            person_email=data["person_email"],
+            total_amount=data["total_amount"],
+            date=data["date"],
+            image=ContentFile(data["image"], name=data["image_name"]),
+            status="pending",
+        )
+        receipt.save()
     return HttpResponse('Receipt created')
 
 
@@ -106,3 +124,19 @@ def add_approved_receipts_to_google_sheet(request):
         print(f'An error occurred: {error}')
 
     return HttpResponse('Approved receipts added to Google Sheet')
+
+def get_all_receipts(request):
+    receipts = Receipt.objects.all()
+    data = []
+    for receipt in receipts:
+        receipt_data = {
+            'id': receipt.id,
+            'person_name': receipt.person_name,
+            'person_email': receipt.person_email,
+            'total_amount': receipt.total_amount,
+            'date': receipt.date,
+            'image_url': receipt.image.url,
+            'status': receipt.status,
+        }
+        data.append(receipt_data)
+    return JsonResponse(data, safe=False)
