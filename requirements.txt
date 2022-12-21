@@ -1,0 +1,5 @@
+Django
+pyrebase4
+django-cors-headers
+djangorestframework
+mysqlclient
