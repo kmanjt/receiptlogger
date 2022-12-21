@@ -1,3 +1,6 @@
 /backend/.env
 /backend/backend/__pycache__
-/backend/backend/client_secret_455580462731-2rt1pk5kdph4r1qklr9f5ijp214ur6fj.apps.googleusercontent.com.json
+/myenv
+/.gitignore
+/backend/client.json
+/backend/receipts/__pycache__
