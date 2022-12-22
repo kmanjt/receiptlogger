@@ -43,24 +43,14 @@ def create_receipt(request):
     except json.decoder.JSONDecodeError:
         return HttpResponse('Invalid request body')
 
-    # Calculate the number of padding characters needed
-    padding = 4 - (len(data["image"]) % 4)
-
-    # Add the necessary padding to the end of the string
-    data["image"] = data["image"] + ('=' * padding)
+    image_data = data['image']
+    # Decode the image data into a binary image file
+    image_data = image_data.split(';base64,')[1]
 
     # Decode the base64-encoded image data
-    image_data = base64.b64decode(data["image"], validate=False)
+    image_binary = base64.b64decode(image_data)
 
 
-    
-
-    # Save the image locally
-    image_path = os.path.join(BASE_DIR, 'media', data["image_name"])
-    with open(data['image_name'], 'wb') as f:
-        f.write(image_data)
-    
-    image_file = File(open(f'{data["image_name"]}', 'rb'))
 
     try:
         # Check if the receipt already exists
@@ -69,7 +59,7 @@ def create_receipt(request):
             person_email=data["person_email"],
             total_amount=data["total_amount"],
             date=data["date"],
-            image=image_file,
+            image=ContentFile(image_binary, name=data['image_name']),
             status="pending",
         )
         # If the receipt already exists, return a response indicating a duplicate receipt
@@ -82,7 +72,7 @@ def create_receipt(request):
             person_email=data["person_email"],
             total_amount=data["total_amount"],
             date=data["date"],
-            image=image_file,
+            image=ContentFile(image_binary, name=data['image_name']),
             status="pending",
         )
         receipt.save()

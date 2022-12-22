@@ -5,3 +5,4 @@
 /backend/client.json
 /backend/receipts/__pycache__
 /backend/static
+/backend/media/receipt_images
