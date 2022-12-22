@@ -4,3 +4,4 @@
 /.gitignore
 /backend/client.json
 /backend/receipts/__pycache__
+/backend/static

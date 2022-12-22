@@ -15,7 +15,8 @@ from django.core.files.base import ContentFile
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
+from io import BytesIO
+from django.core.files import File
 load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,6 +43,25 @@ def create_receipt(request):
     except json.decoder.JSONDecodeError:
         return HttpResponse('Invalid request body')
 
+    # Calculate the number of padding characters needed
+    padding = 4 - (len(data["image"]) % 4)
+
+    # Add the necessary padding to the end of the string
+    data["image"] = data["image"] + ('=' * padding)
+
+    # Decode the base64-encoded image data
+    image_data = base64.b64decode(data["image"], validate=False)
+
+
+    
+
+    # Save the image locally
+    image_path = os.path.join(BASE_DIR, 'media', data["image_name"])
+    with open(data['image_name'], 'wb') as f:
+        f.write(image_data)
+    
+    image_file = File(open(f'{data["image_name"]}', 'rb'))
+
     try:
         # Check if the receipt already exists
         Receipt.objects.get(
@@ -49,7 +69,7 @@ def create_receipt(request):
             person_email=data["person_email"],
             total_amount=data["total_amount"],
             date=data["date"],
-            image=ContentFile(data["image"], name=data["image_name"]),
+            image=image_file,
             status="pending",
         )
         # If the receipt already exists, return a response indicating a duplicate receipt
@@ -62,7 +82,7 @@ def create_receipt(request):
             person_email=data["person_email"],
             total_amount=data["total_amount"],
             date=data["date"],
-            image=ContentFile(data["image"], name=data["image_name"]),
+            image=image_file,
             status="pending",
         )
         receipt.save()

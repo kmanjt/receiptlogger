@@ -6,7 +6,7 @@ const Receipts = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/receipts/all")
+      .get("/receipts/all/")
       .then((response) => {
         setReceipts(response.data);
       })
