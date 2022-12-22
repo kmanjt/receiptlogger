@@ -24,12 +24,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Load the service account credentials from a JSON file
 credentials = Credentials.from_service_account_file(
     os.path.join(BASE_DIR, 'client.json'),
-    scopes=['https://www.googleapis.com/auth/spreadsheets',
-            'https://www.googleapis.com/auth/drive'],
+    scopes=['https://www.googleapis.com/auth/spreadsheets', "https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file"],
 )
 
 # Create a Google Sheets API client with the service account credentials
-service = build('sheets', 'v4', credentials=credentials)
+service = discovery.build('sheets', 'v4', credentials=credentials)
 
 
 # Create a new receipt
@@ -80,21 +79,28 @@ def create_receipt(request):
 
 
 # Update the receipt status and add the approved receipts to the Google Sheet
-@login_required
+@csrf_exempt
 def update_receipt_status(request, receipt_id):
     # Get the user object
-    user = request.user
+    # user = request.user
 
     # Check if the user is an admin
-    if not user.is_admin:
-        return HttpResponse('You are not authorized to perform this action')
+   # if not user.is_admin:
+#     return HttpResponse('You are not authorized to perform this action')
 
     # Get the receipt object
     receipt = get_object_or_404(Receipt, pk=receipt_id)
 
-    # Update the status field of the receipt
+    # Parse the JSON object from the PATCH request
+    try:
+        data = request.body
+        data = json.loads(data)
+    except json.decoder.JSONDecodeError:
+        return HttpResponse('Invalid request body')
+
+    # Update the receipt status
     old_status = receipt.status
-    receipt.status = request.POST['status']
+    receipt.status = data['status']
     receipt.save()
 
     if receipt.status == 'approved' and old_status != 'approved':
@@ -111,11 +117,11 @@ def add_approved_receipts_to_google_sheet(request):
     # Create a list of rows to be added to the Google Sheet
     rows = []
     for receipt in approved_receipts:
-        rows.append([receipt.store_name, receipt.total_amount, receipt.date])
+        rows.append([receipt.person_email, str(receipt.total_amount), str(receipt.date), f'{receipt.image.url}'])
 
     # Append the rows to the Google Sheet
-    sheet_id = 'YOUR_SHEET_ID'  # Replace with the ID of the Google Sheet
-    range_ = 'A1'  # Replace with the range of cells to which you want to append the rows
+    sheet_id = os.getenv('GOOGLE_SHEET_ID')  # Replace with the ID of the Google Sheet
+    range_ = 'Sheet1!A1:E1'  # Replace with the range of cells to which you want to append the rows
     value_input_option = 'RAW'  # Replace with the value input option you want to use
     # Replace with the insert data option you want to use
     insert_data_option = 'INSERT_ROWS'
@@ -126,7 +132,7 @@ def add_approved_receipts_to_google_sheet(request):
             range=range_,
             valueInputOption=value_input_option,
             insertDataOption=insert_data_option,
-            values=rows
+            body={'values': rows}
         ).execute()
         print(
             f'{result["updates"]["updatedRows"]} rows appended to the Google Sheet.')
