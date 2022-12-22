@@ -15,6 +15,20 @@ const Receipts = () => {
       });
   }, []);
 
+  const handleStatusChange = (event, receiptId) => {
+    // Send a request to update the status of the receipt
+    axios
+      .patch(`/receipts/update_receipt_status/${receiptId}/`, {
+        status: event.target.value,
+      })
+      .then((response) => {
+        console.log(response.message);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
     <div>
       {receipts.map((receipt) => (
@@ -24,6 +38,19 @@ const Receipts = () => {
           <p>{receipt.total_amount}</p>
           <p>{receipt.date}</p>
           <img src={receipt.image_url} alt={receipt.image_name} />
+          <form>
+            <label>
+              Status:
+              <select
+                value={receipt.status}
+                onChange={(event) => handleStatusChange(event, receipt.id)}
+              >
+                <option value="pending">Pending</option>
+                <option value="rejected">Rejected</option>
+                <option value="approved">Approved</option>
+              </select>
+            </label>
+          </form>
         </div>
       ))}
     </div>
