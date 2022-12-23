@@ -28,7 +28,7 @@ credentials = Credentials.from_service_account_file(
 )
 
 # Create a Google Sheets API client with the service account credentials
-service = discovery.build('sheets', 'v4', credentials=credentials)
+service = build('sheets', 'v4', credentials=credentials)
 
 
 # Create a new receipt

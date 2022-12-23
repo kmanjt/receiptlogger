@@ -1,17 +1,21 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import Home from './components/Home';
-import Register from './components/Register';
-import Login from './components/Login';
+import Home from './pages/Home';
+import Register from './pages/Register';
+import Login from './pages/Login';
+import ReceiptSubmit from './pages/ReceiptSubmit';
 import Layout from './components/Layout';
-import ReceiptSubmit from './components/ReceiptSubmit';
+import PrivateRoute from './hocs/PrivateRoute';
 
 function App() {
   return (
     <BrowserRouter>
     <Layout/>
     <Routes>
-      <Route index element={<Home />} />
+      
+      <Route element={<PrivateRoute/>}>
+      <Route index element={<Home />} exact/>
+      </Route>
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login/>} />
       <Route path="/receiptsubmit" element={<ReceiptSubmit/>} />
