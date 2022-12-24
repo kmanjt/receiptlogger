@@ -7,8 +7,6 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const navigate = useNavigate();
-
   // Function to handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -39,7 +37,6 @@ const Register = () => {
           alert(data.error);
         } else {
           // Redirect to the login page if registration is successful
-          navigate("/login");
         }
       });
   };
