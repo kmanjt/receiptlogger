@@ -6,10 +6,12 @@ import Login from './pages/Login';
 import ReceiptSubmit from './pages/ReceiptSubmit';
 import Layout from './components/Layout';
 import PrivateRoute from './hocs/PrivateRoute';
+import {AuthProvider} from './hocs/AuthContext';
 
 function App() {
   return (
     <BrowserRouter>
+    <AuthProvider>
     <Layout/>
     <Routes>
       
@@ -19,7 +21,9 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login/>} />
       <Route path="/receiptsubmit" element={<ReceiptSubmit/>} />
+      
     </Routes>
+    </AuthProvider>
     </BrowserRouter>
   );
 }

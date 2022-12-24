@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 
 const Home = () => {
-  return <div>Home</div>;
+  return <div>Welcome Home</div>;
 };
 
 export default Home;
