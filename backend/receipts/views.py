@@ -17,6 +17,13 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from io import BytesIO
 from django.core.files import File
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from .serializers import ReceiptSerializer
+from rest_framework.response import Response
+from django.contrib.auth.models import AnonymousUser, User
+
+
 load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,8 +39,12 @@ service = build('sheets', 'v4', credentials=credentials)
 
 
 # Create a new receipt
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_receipt(request):
+    if isinstance(request.user, AnonymousUser):
+        return Response({'error': 'Authentication credentials were not provided.'}, status=401)
+
     # Parse the JSON object from the POST request
     try:
         data = request.body
@@ -49,9 +60,11 @@ def create_receipt(request):
     # Decode the base64-encoded image data
     image_binary = base64.b64decode(image_data)
 
-
+    # Get the authenticated user
+    user = request.user
 
     try:
+        
         # Check if the receipt already exists
         Receipt.objects.get(
             person_name=data["person_name"],
@@ -67,6 +80,7 @@ def create_receipt(request):
     except Receipt.DoesNotExist:
         # If the receipt does not exist, create a new receipt and return a response indicating that it was created
         receipt = Receipt(
+            user=user,  # Persist the authenticated user as the user who uploaded the receipt
             person_name=data["person_name"],
             person_email=data["person_email"],
             total_amount=data["total_amount"],
@@ -141,18 +155,14 @@ def add_approved_receipts_to_google_sheet(request):
 
     return HttpResponse('Approved receipts added to Google Sheet')
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated]) 
 def get_all_receipts(request):
-    receipts = Receipt.objects.all()
-    data = []
-    for receipt in receipts:
-        receipt_data = {
-            'id': receipt.id,
-            'person_name': receipt.person_name,
-            'person_email': receipt.person_email,
-            'total_amount': receipt.total_amount,
-            'date': receipt.date,
-            'image_url': receipt.image.url,
-            'status': receipt.status,
-        }
-        data.append(receipt_data)
-    return JsonResponse(data, safe=False)
+    user = request.user
+
+    # return all receipts associated with the user
+    receipts = Receipt.objects.filter(user=user)
+
+    serializer = ReceiptSerializer(receipts, many=True)
+    
+    return Response(serializer.data)

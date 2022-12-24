@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import Receipts from "./Receipts";
+import AuthContext from "../hocs/AuthContext";
 
 const ReceiptSubmit = () => {
   const [personName, setPersonName] = useState("");
@@ -10,6 +11,9 @@ const ReceiptSubmit = () => {
   const [image, setImage] = useState("");
   const [imageName, setImageName] = useState("");
   const [imageBase64, setImageBase64] = useState("");
+
+  let { contextData } = useContext(AuthContext);
+  let { user, authTokens } = contextData;
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -23,8 +27,13 @@ const ReceiptSubmit = () => {
       image_name: imageName,
     };
 
+    // axios post request same as above which also uses a header to send the token
     axios
-      .post("http://localhost:8000/receipts/create_receipt/", data)
+      .post("receipts/create_receipt/", data, {
+        headers: {
+          Authorization: "Bearer " + authTokens.access,
+        },
+      })
       .then((response) => {
         console.log(response.message);
         alert("Receipt successfully uploaded");
@@ -90,7 +99,7 @@ const ReceiptSubmit = () => {
           />
         </label>
         <br />
-        <input type="submit" value="Submit" />
+        {user && <input type="submit" value="Submit" />}
       </form>
       <Receipts />
     </>

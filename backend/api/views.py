@@ -20,8 +20,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 def getRoutes(request):
-    routes = [ "api/token",
-    "api/token/refresh" ]
+    routes = [ "api/token/",
+    "api/token/refresh/" ]
 
 
     return JsonResponse(routes, safe=False)

@@ -5,13 +5,18 @@ import AuthContext from "../hocs/AuthContext";
 const Layout = () => {
   let { contextData } = useContext(AuthContext);
   let { user } = contextData;
+  let { logoutUser } = contextData;
   return (
     <div>
       <Link to="/">Home</Link>
       <span> | </span>
       <Link to="/register">Register</Link>
       <span> | </span>
-      {user ? <p>Logout</p> : <Link to="/login">Login</Link>}
+      {user ? (
+        <button onClick={logoutUser}>Logout</button>
+      ) : (
+        <Link to="/login">Login</Link>
+      )}
       <span> | </span>
       <Link to="/receiptsubmit">Receipt Submit</Link>
 

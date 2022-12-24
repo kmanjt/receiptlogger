@@ -4,4 +4,4 @@ from .models import Receipt
 class ReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Receipt
-        fields = ['person_name', 'person_email', 'total_amount', 'date', 'image', 'status']
+        fields = ('id', 'user', 'person_name', 'person_email', 'total_amount', 'date', 'image', 'status')

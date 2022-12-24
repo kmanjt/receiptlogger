@@ -1,18 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../hocs/AuthContext";
 
 const Receipts = () => {
   const [receipts, setReceipts] = useState([]);
+  let navigate = useNavigate();
+  let { contextData } = useContext(AuthContext);
+  let { user, authTokens, logoutUser } = contextData;
+
+  let getReceipts = async () => {
+    let response = await fetch("/receipts/all/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + authTokens.access,
+      },
+    });
+    let data = await response.json();
+    if (response.status === 200) {
+      setReceipts(data);
+    } else if (response.status === 401) {
+      // remove the token from local storage
+      logoutUser();
+      // redirect to the login page
+      navigate("/login");
+    }
+  };
 
   useEffect(() => {
-    axios
-      .get("/receipts/all/")
-      .then((response) => {
-        setReceipts(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    getReceipts();
   }, []);
 
   const handleStatusChange = (event, receiptId) => {

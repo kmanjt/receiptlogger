@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useNavigate } from "react";
 
 const Register = () => {
   // Declare state variables for the form input fields
@@ -6,6 +6,8 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const navigate = useNavigate();
 
   // Function to handle form submission
   const handleSubmit = (event) => {
@@ -19,6 +21,27 @@ const Register = () => {
     }
 
     // Send a request to the server to register the user
+    fetch("/api/users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+        email: email,
+        password: password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Display error message if registration fails
+        if (data.error) {
+          alert(data.error);
+        } else {
+          // Redirect to the login page if registration is successful
+          navigate("/login");
+        }
+      });
   };
 
   return (
