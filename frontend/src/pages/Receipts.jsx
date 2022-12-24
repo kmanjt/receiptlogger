@@ -54,7 +54,7 @@ const Receipts = () => {
           <p>{receipt.person_email}</p>
           <p>{receipt.total_amount}</p>
           <p>{receipt.date}</p>
-          <img src={receipt.image_url} alt={receipt.image_name} />
+          <img src={receipt.image} />
           <form>
             <label>
               Status:
