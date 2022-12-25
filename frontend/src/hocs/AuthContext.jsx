@@ -108,10 +108,12 @@ export const AuthProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [authTokens, loading]);
 
-  // call refreshToken on first load if auth tokens exist and loading
+  // call refreshToken on the first load and then set loading to false
   useEffect(() => {
-    if (authTokens && loading) refreshTokens();
-  }, [authTokens, loading]);
+    // prevent error on first load
+    if (loading && authTokens) refreshTokens();
+    setLoading(false);
+  }, []);
 
   let contextData = {
     user: user,

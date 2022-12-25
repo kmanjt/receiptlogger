@@ -18,9 +18,13 @@ function App() {
       <Route element={<PrivateRoute/>}>
       <Route index element={<Home />} exact/>
       </Route>
+
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login/>} />
+
+      <Route element={<PrivateRoute/>}>
       <Route path="/receiptsubmit" element={<ReceiptSubmit/>} />
+      </Route>
       
     </Routes>
     </AuthProvider>
