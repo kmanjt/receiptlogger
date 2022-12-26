@@ -18,7 +18,7 @@ from googleapiclient.errors import HttpError
 from io import BytesIO
 from django.core.files import File
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .serializers import ReceiptSerializer
 from rest_framework.response import Response
 from django.contrib.auth.models import AnonymousUser, User
@@ -162,6 +162,15 @@ def get_all_receipts(request):
 
     # return all receipts associated with the user
     receipts = Receipt.objects.filter(user=user)
+
+    serializer = ReceiptSerializer(receipts, many=True)
+    
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdminUser]) 
+def get_all_receipts_admin(request):
+    receipts = Receipt.objects.all()
 
     serializer = ReceiptSerializer(receipts, many=True)
     
