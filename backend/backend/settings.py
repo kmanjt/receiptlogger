@@ -191,3 +191,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Set the media URL and media root
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Use the SMTP email backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# The email server's hostname
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+
+# The port to use to connect to the email server
+EMAIL_PORT = 587
+
+# The username and password to use to authenticate with the email server
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+# Whether to use a secure connection when communicating with the email server
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+# The default "from" address for emails sent by your Django app
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')

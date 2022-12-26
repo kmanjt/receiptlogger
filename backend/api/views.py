@@ -8,9 +8,15 @@ from rest_framework.response import Response
 import json
 import re
 from rest_framework.decorators import api_view
+import os
+from dotenv import load_dotenv
+from django.core.mail import EmailMessage
 
 # Create your views here.
 from django.http import JsonResponse
+
+
+load_dotenv()
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -42,6 +48,23 @@ def is_dcu_email(email):
     pattern = r'@(mail\.)?dcu\.ie$'
     return re.search(pattern, email) is not None
 
+# send an email to the user with their login credentials
+def send_confirmation_email(data):
+    subject = 'Enactus DCU - Treasury Confirmation'
+    message = f'Hello {data["username"]},\n\nThank you for registering with the Enactus DCU Treasury!\n\nYour account has been created, you can now log in with the following credentials:\n\nUsername: {data["username"]}\nPassword: {data["password"]}\n\nRegards,\nEnactus DCU'
+    from_email = os.getenv('EMAIL_HOST_USER')
+    recipient_list = [f'{data["email"]}']
+
+    email = EmailMessage(subject, message, from_email, recipient_list)
+
+    try:
+        email.send()
+        return True # email sent successfully
+    except Exception as e:
+        print(e)
+        return False # email failed to send
+    
+
 # register a new user account from a POST request
 @api_view(['POST'])
 def register(request):
@@ -55,7 +78,7 @@ def register(request):
 
     # Check if the email is a DCU email
     if not is_dcu_email(data['email']):
-        return Response({'error': 'Invalid email'}, status=400)
+        return Response({'error': 'Invalid email, must be a DCU email!'}, status=400)
     
     # check if the password is valid
     if len(data['password']) < 5:
@@ -65,10 +88,9 @@ def register(request):
     if len(data['iban']) != 22:
         return Response({'error': 'Invalid IBAN'}, status=400)
     
-    # check if the IBAN is Irish or Lithuanian
-    if data['iban'][:2] != 'IE' or data['iban'][:2] != 'LT':
-        return Response({'error': 'Invalid IBAN'}, status=400)
-
+    # send an email to the user with their login credentials
+    if not send_confirmation_email(data):
+        return Response({'error': 'Failed to send confirmation email'}, status=400)
 
     # Create a new user account
     try:

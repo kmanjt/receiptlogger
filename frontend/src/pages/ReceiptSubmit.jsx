@@ -4,9 +4,8 @@ import Receipts from "./Receipts";
 import AuthContext from "../hocs/AuthContext";
 
 const ReceiptSubmit = () => {
-  const [personName, setPersonName] = useState("");
-  const [personEmail, setPersonEmail] = useState("");
   const [totalAmount, setTotalAmount] = useState("");
+
   const [date, setDate] = useState("");
   const [image, setImage] = useState("");
   const [imageName, setImageName] = useState("");
@@ -19,12 +18,13 @@ const ReceiptSubmit = () => {
     event.preventDefault();
 
     const data = {
-      person_name: personName,
-      person_email: personEmail,
+      username: user.username,
+      email: user.email,
       total_amount: totalAmount,
       date: date,
       image: imageBase64,
       image_name: imageName,
+      iban: user.iban,
     };
 
     // axios post request same as above which also uses a header to send the token
@@ -35,35 +35,16 @@ const ReceiptSubmit = () => {
         },
       })
       .then((response) => {
-        console.log(response.message);
         alert("Receipt successfully uploaded");
       })
       .catch((error) => {
-        console.error(error.message);
+        alert("Receipt upload failed", error.message);
       });
   };
 
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <label>
-          Person Name:
-          <input
-            type="text"
-            value={personName}
-            onChange={(event) => setPersonName(event.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-          Person Email:
-          <input
-            type="email"
-            value={personEmail}
-            onChange={(event) => setPersonEmail(event.target.value)}
-          />
-        </label>
-        <br />
         <label>
           Total Amount:
           <input
@@ -87,6 +68,19 @@ const ReceiptSubmit = () => {
           <input
             type="file"
             onChange={(event) => {
+              // validate if the image is less than 2MB
+              if (event.target.files[0].size > 2000000) {
+                alert("Image size is too large! Max is 2MB.");
+                return;
+              }
+              // validate if the image is a jpg or png
+              if (
+                event.target.files[0].type !== "image/jpeg" &&
+                event.target.files[0].type !== "image/png"
+              ) {
+                alert("Image type is not supported, must be jpg or png.");
+                return;
+              }
               setImage(event.target.files[0]);
               setImageName(event.target.files[0].name);
               const reader = new FileReader();

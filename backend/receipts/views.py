@@ -93,15 +93,9 @@ def create_receipt(request):
 
 
 # Update the receipt status and add the approved receipts to the Google Sheet
-@csrf_exempt
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser])
 def update_receipt_status(request, receipt_id):
-    # Get the user object
-    # user = request.user
-
-    # Check if the user is an admin
-   # if not user.is_admin:
-#     return HttpResponse('You are not authorized to perform this action')
-
     # Get the receipt object
     receipt = get_object_or_404(Receipt, pk=receipt_id)
 
@@ -131,7 +125,7 @@ def add_approved_receipts_to_google_sheet(request):
     # Create a list of rows to be added to the Google Sheet
     rows = []
     for receipt in approved_receipts:
-        rows.append([receipt.person_email, str(receipt.total_amount), str(receipt.date), f'{receipt.image.url}'])
+        rows.append([User.email, str(receipt.total_amount), str(receipt.date), f'{receipt.image.url}'])
 
     # Append the rows to the Google Sheet
     sheet_id = os.getenv('GOOGLE_SHEET_ID')  # Replace with the ID of the Google Sheet
@@ -168,10 +162,25 @@ def get_all_receipts(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAdminUser]) 
+@permission_classes([IsAdminUser]) 
 def get_all_receipts_admin(request):
     receipts = Receipt.objects.all()
 
     serializer = ReceiptSerializer(receipts, many=True)
     
     return Response(serializer.data)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_receipt(request, receipt_id):
+    # delete the receipt if its the same users receipt
+
+    user = request.user
+
+    receipt = get_object_or_404(Receipt, pk=receipt_id)
+
+    if receipt.user != user:
+        return Response({'error': 'You do not have permission to delete this receipt.'}, status=401)
+    
+    receipt.delete()
+    return Response({'message': 'Receipt deleted'}, status=200)
