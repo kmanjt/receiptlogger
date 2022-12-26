@@ -4,7 +4,7 @@ This is a web app that allows users to submit receipts for approval, and adminis
 
 ## Features
 
-- User registration and login using Simple JSON Web Tokens and Django REST Framework.
+- User registration and login using Simple JSON Web Tokens and Django REST Framework, with a confirmation for all new sign ups.
 - User accounts include IBAN for administrators to easily facilitate reimbursement for approved payments.
 - Users can submit receipts by uploading an image and providing details about the receipt, such as the date, purchase amount and reason.
 - All users and receipts (as well as each users associated receipts) are stored in a MySQL 5.7  DB or greater.
