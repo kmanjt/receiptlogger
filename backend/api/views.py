@@ -11,6 +11,8 @@ from rest_framework.decorators import api_view
 import os
 from dotenv import load_dotenv
 from django.core.mail import EmailMessage
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAdminUser
 
 # Create your views here.
 from django.http import JsonResponse
@@ -111,3 +113,15 @@ def register(request):
 
     # return the access and refresh token clearly seperated
     return Response({ 'access': str(token.access_token), 'refresh': str(token) }, status=200)
+
+# Get all users email addresses if the user is an admin
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def getUsers(request):
+    users = User.objects.all()
+    emails = []
+
+    for user in users:
+        emails.append(user.email)
+
+    return Response(emails, status=200)
