@@ -29,12 +29,6 @@ const Receipts = () => {
     if (response.status === 200) {
       setReceipts(data);
     } else if (response.status === 401) {
-      // remove the token from local storage
-      logoutUser();
-      // redirect to the login page
-      navigate("/login");
-
-      alert("Receipt upload failed, logged out.");
     }
   };
 
@@ -58,18 +52,6 @@ const Receipts = () => {
       alert("Receipt upload failed, logged out.");
     }
   };
-
-  // update the receipts every 60 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (user.is_staff) {
-        getAdminReceipts();
-      } else {
-        getReceipts();
-      }
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   // update the receipts when the page loads
   useEffect(() => {
