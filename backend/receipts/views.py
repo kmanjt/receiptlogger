@@ -110,32 +110,30 @@ def update_receipt_status(request, receipt_id):
         data = request.body
         data = json.loads(data)
     except json.decoder.JSONDecodeError:
-        return HttpResponse('Invalid request body')
+        return Response('Invalid request body', status=400)
 
     # Update the receipt status
     old_status = receipt.status
     receipt.status = data['status']
+    receipt.status_updated_by = User.objects.get(id=request.user.id)
     receipt.save()
 
     if receipt.status == 'approved' and old_status != 'approved':
-        add_approved_receipts_to_google_sheet(None)
+        add_approved_receipts_to_google_sheet(receipt)
 
-    return HttpResponse('Receipt status updated')
+    return Response('Receipt status updated', status=200)
 
 
 # Add the approved receipts to the Google Sheet
-def add_approved_receipts_to_google_sheet(request):
-    # Get the approved receipts from the database
-    approved_receipts = Receipt.objects.filter(status='approved')
+def add_approved_receipts_to_google_sheet(receipt):
 
-    # Create a list of rows to be added to the Google Sheet
+    # Create a list of rows to append to the Google Sheet
     rows = []
-    for receipt in approved_receipts:
-        rows.append([User.email, str(receipt.total_amount), str(receipt.date), f'{receipt.image.url}'])
+    rows.append([str(receipt.email), str(receipt.total_amount), str(receipt.date), str(receipt.reason), str(receipt.image.url)])
 
     # Append the rows to the Google Sheet
     sheet_id = os.getenv('GOOGLE_SHEET_ID')  # Replace with the ID of the Google Sheet
-    range_ = 'Sheet1!A1:E1'  # Replace with the range of cells to which you want to append the rows
+    range_ = 'Approved Receipts!A4:E4'  # Replace with the range of cells to which you want to append the rows
     value_input_option = 'RAW'  # Replace with the value input option you want to use
     # Replace with the insert data option you want to use
     insert_data_option = 'INSERT_ROWS'
@@ -154,6 +152,7 @@ def add_approved_receipts_to_google_sheet(request):
         print(f'An error occurred: {error}')
 
     return HttpResponse('Approved receipts added to Google Sheet')
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated]) 

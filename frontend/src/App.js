@@ -7,12 +7,14 @@ import ReceiptSubmit from './pages/ReceiptSubmit';
 import Layout from './components/Layout';
 import PrivateRoute from './hocs/PrivateRoute';
 import {AuthProvider} from './hocs/AuthContext';
+import Appbar from './components/Appbar';
 
 function App() {
   return (
     <BrowserRouter>
     <AuthProvider>
     <Layout/>
+    <Appbar/>
     <Routes>
       
       <Route element={<PrivateRoute/>}>

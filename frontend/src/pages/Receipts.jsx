@@ -10,6 +10,10 @@ const Receipts = () => {
   let { contextData } = useContext(AuthContext);
   let { user, authTokens, logoutUser } = contextData;
 
+  // add the access token to the request header
+  axios.defaults.headers.common["Authorization"] =
+    "Bearer " + authTokens.access;
+
   // call a function conditionally if the user is an admin
   if (user.is_staff) {
     // call a function to get all receipts
@@ -69,7 +73,7 @@ const Receipts = () => {
         status: event.target.value,
       })
       .then((response) => {
-        console.log(response.message);
+        alert("Receipt status updated successfully");
       })
       .catch((error) => {
         console.error(error);

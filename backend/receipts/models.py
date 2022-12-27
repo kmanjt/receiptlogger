@@ -17,6 +17,9 @@ class Receipt(models.Model):
     image = models.ImageField(upload_to='receipt_images')
     status = models.CharField(
         max_length=8, choices=STATUS_CHOICES, default='pending')
+    status_updated_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, related_name='status_updated_by', editable=False)
+    status_updated_at = models.DateTimeField(auto_now=True, editable=False)
     iban = models.CharField(max_length=255, null=True)
     reimbursed = models.BooleanField(default=False)
 

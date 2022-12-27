@@ -100,11 +100,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // refresh the token every 4 minutes
+  // refresh the token every 9 minutes
   useEffect(() => {
     const interval = setInterval(() => {
       if (authTokens) refreshTokens();
-    }, 1000 * 60 * 4); // 4 minutes
+    }, 1000 * 60 * 9); // 9 minutes
     return () => clearInterval(interval);
   }, [authTokens, loading]);
 
