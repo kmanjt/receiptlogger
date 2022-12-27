@@ -5,7 +5,6 @@ import AuthContext from "../hocs/AuthContext";
 
 const Receipts = () => {
   const [receipts, setReceipts] = useState([]);
-  const [adminReceipts, setAdminReceipts] = useState([]);
   let navigate = useNavigate();
   let { contextData } = useContext(AuthContext);
   let { user, authTokens, logoutUser } = contextData;
@@ -81,27 +80,32 @@ const Receipts = () => {
   };
 
   return (
-    <div>
+    <div className="grid grid-cols-3 gap-4 py-16">
       {receipts.map((receipt) => (
-        <div key={receipt.id}>
+        <div key={receipt.id} className="card border-black border-[1px]">
           <h3>{receipt.username}</h3>
           <p>{receipt.email}</p>
           <p>{receipt.total_amount}</p>
           <p>{receipt.reason}</p>
           <p>{receipt.date}</p>
-          <img src={receipt.image} />
+          <img src={receipt.image} className="h-64" alt="receipt" />
           <form>
-            <label>
-              Status:
-              <select
-                value={receipt.status}
-                onChange={(event) => handleStatusChange(event, receipt.id)}
-              >
-                <option value="pending">Pending</option>
-                <option value="rejected">Rejected</option>
-                <option value="approved">Approved</option>
-              </select>
-            </label>
+            <>
+              {user.admin && (
+                <label>
+                  Status:
+                  <select
+                    value={receipt.status}
+                    onChange={(event) => handleStatusChange(event, receipt.id)}
+                    className="form-select"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="approved">Approved</option>
+                  </select>
+                </label>
+              )}
+            </>
           </form>
         </div>
       ))}

@@ -13,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Link } from "react-router-dom";
+import AuthContext from "../hocs/AuthContext";
 
 const pages = ["receipts"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -20,6 +21,8 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 const Appbar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const { contextData } = useContext(AuthContext);
+  const { user, logoutUser } = contextData;
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -87,6 +90,7 @@ const Appbar = () => {
             >
               <MenuIcon />
             </IconButton>
+
             <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
@@ -101,15 +105,68 @@ const Appbar = () => {
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
+              display={{ xs: "block", md: "none" }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              <>
+                {!user ? (
+                  <>
+                    <MenuItem key={"/register"} onClick={handleCloseNavMenu}>
+                      <Link to="/register" style={{ textDecoration: "none" }}>
+                        <Button
+                          key={"register"}
+                          onClick={handleCloseNavMenu}
+                          color="primary"
+                          variant="contained"
+                          fullWidth
+                        >
+                          Register
+                        </Button>
+                      </Link>
+                    </MenuItem>
+
+                    <MenuItem key={"/login"} onClick={handleCloseNavMenu}>
+                      <Link to="/login" style={{ textDecoration: "none" }}>
+                        <Button
+                          key={"submit-receipt"}
+                          onClick={handleCloseNavMenu}
+                          color="primary"
+                          variant="contained"
+                          fullWidth
+                        >
+                          Login
+                        </Button>
+                      </Link>
+                    </MenuItem>
+                  </>
+                ) : (
+                  <>
+                    <MenuItem key={"/receipts"} onClick={handleCloseNavMenu}>
+                      <Link to="/receipts" style={{ textDecoration: "none" }}>
+                        <Button
+                          key={"submit-receipt"}
+                          onClick={handleCloseNavMenu}
+                          color="primary"
+                          variant="contained"
+                          fullWidth
+                        >
+                          Receipts
+                        </Button>
+                      </Link>
+                    </MenuItem>
+                    <MenuItem key={"/logout"} onClick={handleCloseNavMenu}>
+                      <Button
+                        key={"logout"}
+                        onClick={logoutUser}
+                        color="primary"
+                        variant="contained"
+                        fullWidth
+                      >
+                        Logout
+                      </Button>
+                    </MenuItem>
+                  </>
+                )}
+              </>
             </Menu>
           </Box>
           <Typography
@@ -131,15 +188,50 @@ const Appbar = () => {
             Enactus DCU Treasury
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
+            <>
+              {!user ? (
+                <>
+                  <Link to="/register" style={{ textDecoration: "none" }}>
+                    <Button
+                      key={"register"}
+                      onClick={handleCloseNavMenu}
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      Register
+                    </Button>
+                  </Link>
+
+                  <Link to="/login" style={{ textDecoration: "none" }}>
+                    <Button
+                      key={"submit-receipt"}
+                      onClick={handleCloseNavMenu}
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/receipts" style={{ textDecoration: "none" }}>
+                    <Button
+                      key={"submit-receipt"}
+                      onClick={handleCloseNavMenu}
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      Receipts
+                    </Button>
+                  </Link>
+                  <Button
+                    key={"logout"}
+                    onClick={logoutUser}
+                    sx={{ my: 2, color: "white", display: "block" }}
+                  >
+                    Logout
+                  </Button>
+                </>
+              )}
+            </>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>

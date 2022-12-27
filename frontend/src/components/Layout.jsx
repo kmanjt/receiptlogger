@@ -13,7 +13,7 @@ const Layout = () => {
       <Link to="/register">Register</Link>
 
       <span> | </span>
-      <Link to="/submit-receipt">Submit Receipt</Link>
+      <Link to="/receipts">Receipts</Link>
       <span> | </span>
       {user ? (
         <button onClick={logoutUser}>Logout</button>

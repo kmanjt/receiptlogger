@@ -13,7 +13,7 @@ function App() {
   return (
     <BrowserRouter>
     <AuthProvider>
-    <Layout/>
+
     <Appbar/>
     <Routes>
       
@@ -25,7 +25,7 @@ function App() {
       <Route path="/login" element={<Login/>} />
 
       <Route element={<PrivateRoute/>}>
-      <Route path="/submit-receipt" element={<ReceiptSubmit/>} />
+      <Route path="/receipts" element={<ReceiptSubmit/>} />
       </Route>
       
     </Routes>
