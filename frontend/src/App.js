@@ -23,7 +23,7 @@ function App() {
       <Route path="/login" element={<Login/>} />
 
       <Route element={<PrivateRoute/>}>
-      <Route path="/receiptsubmit" element={<ReceiptSubmit/>} />
+      <Route path="/submit-receipt" element={<ReceiptSubmit/>} />
       </Route>
       
     </Routes>

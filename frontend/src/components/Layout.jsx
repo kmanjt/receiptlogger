@@ -11,15 +11,15 @@ const Layout = () => {
       <Link to="/">Home</Link>
       <span> | </span>
       <Link to="/register">Register</Link>
+
+      <span> | </span>
+      <Link to="/submit-receipt">Submit Receipt</Link>
       <span> | </span>
       {user ? (
         <button onClick={logoutUser}>Logout</button>
       ) : (
         <Link to="/login">Login</Link>
       )}
-      <span> | </span>
-      <Link to="/receiptsubmit">Receipt Submit</Link>
-
       <br></br>
       <br></br>
       {user && <p> Welcome {user.username}</p>}

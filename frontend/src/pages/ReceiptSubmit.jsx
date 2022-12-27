@@ -10,6 +10,7 @@ const ReceiptSubmit = () => {
   const [image, setImage] = useState("");
   const [imageName, setImageName] = useState("");
   const [imageBase64, setImageBase64] = useState("");
+  const [reason, setReason] = useState("");
 
   let { contextData } = useContext(AuthContext);
   let { user, authTokens } = contextData;
@@ -17,6 +18,14 @@ const ReceiptSubmit = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    if (image === "") {
+      alert("Please upload an image");
+      return;
+    }
+    if (totalAmount === "" || totalAmount < 0) {
+      alert("Please enter a valid total amount");
+      return;
+    }
     const data = {
       username: user.username,
       email: user.email,
@@ -25,6 +34,7 @@ const ReceiptSubmit = () => {
       image: imageBase64,
       image_name: imageName,
       iban: user.iban,
+      reason: reason,
     };
 
     // axios post request same as above which also uses a header to send the token
@@ -59,7 +69,18 @@ const ReceiptSubmit = () => {
           <input
             type="date"
             value={date}
+            required={true}
             onChange={(event) => setDate(event.target.value)}
+          />
+        </label>
+        <br />
+        <label>
+          Reason:
+          <input
+            type="text"
+            value={reason}
+            required={true}
+            onChange={(event) => setReason(event.target.value)}
           />
         </label>
         <br />
@@ -93,6 +114,7 @@ const ReceiptSubmit = () => {
           />
         </label>
         <br />
+
         {user && <input type="submit" value="Submit" />}
       </form>
       <Receipts />

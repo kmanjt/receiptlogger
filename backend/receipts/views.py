@@ -60,36 +60,42 @@ def create_receipt(request):
     # Decode the base64-encoded image data
     image_binary = base64.b64decode(image_data)
 
-    # Get the authenticated user
-    user = request.user
+
 
     try:
         
         # Check if the receipt already exists
         Receipt.objects.get(
-            person_name=data["person_name"],
-            person_email=data["person_email"],
+            user = request.user,
+            username=data["username"],
+            email=data["email"],
+            reason=data["reason"],
             total_amount=data["total_amount"],
             date=data["date"],
             image=ContentFile(image_binary, name=data['image_name']),
+            iban=data["iban"],
             status="pending",
         )
+
         # If the receipt already exists, return a response indicating a duplicate receipt
-        return HttpResponse('Duplicate receipt')
+        return Response('Duplicate receipt', status=409)
 
     except Receipt.DoesNotExist:
         # If the receipt does not exist, create a new receipt and return a response indicating that it was created
         receipt = Receipt(
-            user=user,  # Persist the authenticated user as the user who uploaded the receipt
-            person_name=data["person_name"],
-            person_email=data["person_email"],
+            user = request.user,
+            username=data["username"],
+            email=data["email"],
+            reason=data["reason"],
             total_amount=data["total_amount"],
             date=data["date"],
             image=ContentFile(image_binary, name=data['image_name']),
+            iban=data["iban"],
             status="pending",
         )
         receipt.save()
-    return HttpResponse('Receipt created')
+
+    return Response('Receipt created', status=201)
 
 
 # Update the receipt status and add the approved receipts to the Google Sheet
@@ -184,3 +190,49 @@ def delete_receipt(request, receipt_id):
     
     receipt.delete()
     return Response({'message': 'Receipt deleted'}, status=200)
+
+# Get the total due for each user
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_total_due(request):
+    # Get all the receipts from the database
+    receipts = Receipt.objects.all()
+
+    # Create a dictionary to store the total due for each user
+    total_due = {}
+
+    # Iterate through the receipts and add the total amount to the total due for each user
+    for receipt in receipts:
+        # check if the receipt was approved
+        if receipt.status != 'approved':
+            continue
+        else:
+            if receipt.user.email in total_due:
+                total_due[receipt.user.email] += receipt.total_amount
+            else:
+                total_due[receipt.user.email] = receipt.total_amount
+
+    return Response(total_due, status=200)
+
+# Set a receipt to reimbursed if admin
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser])
+def set_reimbursed(request, receipt_id):
+    # Get the receipt object
+    receipt = get_object_or_404(Receipt, pk=receipt_id)
+
+    # Parse the JSON object from the PATCH request
+    try:
+        data = request.body
+        data = json.loads(data)
+    except json.decoder.JSONDecodeError:
+        return Response('Invalid request body', status=400)
+
+    # Toggle between reimbursed and not reimbursed
+    if receipt.reimbursed:
+        receipt.reimbursed = False
+    else:
+        receipt.reimbursed = True
+    receipt.save()
+
+    return Response(f'Receipt reimbursed: {receipt.reimbursed}', status=200)
