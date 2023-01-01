@@ -19,3 +19,36 @@ This is a web app that allows users to submit receipts for approval, and adminis
 - [MySQL 5.7 DB](https://dev.mysql.com/) or higher
 - [React 16.13](https://reactjs.org/) or higher
 - [Google Sheets API](https://developers.google.com/sheets/api) credentials
+
+## Set Up
+### For Django Backend:
+1. Create a .env file in backend/ to store the following fields:
+```env
+MySQL database credentials
+MYSQL_DATABASE=
+MYSQL_USER=
+MYSQL_PASSWORD=
+MYSQL_HOST=
+MYSQL_PORT=
+
+# Django secret key
+SECRET_KEY=
+
+# Google Sheet Client Secret Path
+GOOGLE_SHEETS_CLIENT_SECRET_PATH=
+GOOGLE_SHEET_ID=
+
+EMAIL_HOST_USER = 
+EMAIL_HOST_PASSWORD = 
+EMAIL_HOST = 
+DEFAULT_FROM_EMAIL =
+```
+2. Create a new virtual environment using `python3 -m venv env` and activate it using `source env/bin/activate`.
+3. Install the required packages using `pip install -r requirements.txt`.
+4. Create a new MySQL database and update the `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_HOST`, and `MYSQL_PORT` variables in the `.env` file with the corresponding values.
+5. Generate a Django secret key and update the `SECRET_KEY` variable in the `.env` file.
+6. Obtain Google Sheets API credentials and update the `GOOGLE_SHEETS_CLIENT_SECRET_PATH` and `GOOGLE_SHEET_ID` variables in the `.env` file with the corresponding values.
+7. Update the `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_HOST`, and `DEFAULT_FROM_EMAIL` variables in the `.env` file with the email account and host information that will be used to send confirmation emails.
+8. Run the following command to set up the database and create a superuser: `python manage.py migrate` and `python manage.py createsuperuser`.
+9. Start the development server using `python manage.py runserver`.
+10. Navigate to http://localhost:8000/ in your browser to view the app.
