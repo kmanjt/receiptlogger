@@ -24,7 +24,7 @@ This is a web app that allows users to submit receipts for approval, and adminis
 ### For Django Backend:
 1. Create a .env file in backend/ to store the following fields:
 ```env
-MySQL database credentials
+# MySQL database credentials
 MYSQL_DATABASE=
 MYSQL_USER=
 MYSQL_PASSWORD=
