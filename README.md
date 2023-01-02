@@ -52,3 +52,7 @@ DEFAULT_FROM_EMAIL =
 8. Run the following command to set up the database and create a superuser: `python manage.py migrate` and `python manage.py createsuperuser`.
 9. Start the development server using `python manage.py runserver`.
 10. Navigate to http://localhost:8000/ in your browser to view the app.
+
+### For React Frontend:
+1. From the frontend/ directory, run npm install
+2. Once dependencies are installed, create a production build: npm run build 
