@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
         // set loading to false
         if (loading) setLoading(false);
       } else {
-        logoutUser();
+        return;
       }
     }
   };
