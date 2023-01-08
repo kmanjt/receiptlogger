@@ -213,10 +213,10 @@ def get_total_due(request):
 
     return Response(total_due, status=200)
 
-# Set a receipt to reimbursed if admin
+# Admins mark a receipt as reimbursed
 @api_view(['PATCH'])
 @permission_classes([IsAdminUser])
-def set_reimbursed(request, receipt_id):
+def mark_reimbursed(request, receipt_id):
     # Get the receipt object
     receipt = get_object_or_404(Receipt, pk=receipt_id)
 
@@ -227,11 +227,8 @@ def set_reimbursed(request, receipt_id):
     except json.decoder.JSONDecodeError:
         return Response('Invalid request body', status=400)
 
-    # Toggle between reimbursed and not reimbursed
-    if receipt.reimbursed:
-        receipt.reimbursed = False
-    else:
-        receipt.reimbursed = True
+    # Update the receipt status
+    receipt.reimbursed =  data['reimbursed']
     receipt.save()
 
-    return Response(f'Receipt reimbursed: {receipt.reimbursed}', status=200)
+    return Response('Receipt marked as reimbursed', status=200)

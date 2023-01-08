@@ -50,73 +50,103 @@ const ReceiptSubmit = () => {
       .catch((error) => {
         alert("Receipt upload failed", error.message);
       });
+
+    // reset the form
+    setTotalAmount("");
+    setDate("");
+    setImage("");
+    setImageName("");
+    setImageBase64("");
+    setReason("");
   };
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Total Amount:
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full flex-col"
+      >
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2 w-full"
+            htmlFor="total-amount"
+          >
+            Total Amount:
+          </label>
           <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="total-amount"
             type="number"
             value={totalAmount}
             onChange={(event) => setTotalAmount(event.target.value)}
           />
-        </label>
-        <br />
-        <label>
-          Date:
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2 w-full"
+            htmlFor="date"
+          >
+            Date:
+          </label>
           <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="date"
             type="date"
             value={date}
             required={true}
             onChange={(event) => setDate(event.target.value)}
           />
-        </label>
-        <br />
-        <label>
-          Reason:
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2 w-full"
+            htmlFor="reason"
+          >
+            Reason:
+          </label>
           <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="reason"
             type="text"
             value={reason}
             required={true}
             onChange={(event) => setReason(event.target.value)}
           />
-        </label>
-        <br />
-        <label>
-          Image:
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-
+          2 w-full"
+            htmlFor="image"
+          >
+            Image:
+          </label>
           <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="image"
             type="file"
+            accept="image/*"
             onChange={(event) => {
-              // validate if the image is less than 2MB
-              if (event.target.files[0].size > 2000000) {
-                alert("Image size is too large! Max is 2MB.");
-                return;
-              }
-              // validate if the image is a jpg or png
-              if (
-                event.target.files[0].type !== "image/jpeg" &&
-                event.target.files[0].type !== "image/png"
-              ) {
-                alert("Image type is not supported, must be jpg or png.");
-                return;
-              }
               setImage(event.target.files[0]);
               setImageName(event.target.files[0].name);
               const reader = new FileReader();
-              reader.readAsDataURL(event.target.files[0]);
-              // below is changing the image to base64
               reader.onloadend = () => {
                 setImageBase64(reader.result);
               };
+              reader.readAsDataURL(event.target.files[0]);
             }}
           />
-        </label>
-        <br />
-
-        {user && <input type="submit" value="Submit" />}
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
+          >
+            Submit
+          </button>
+        </div>
       </form>
+
       <Receipts />
     </>
   );

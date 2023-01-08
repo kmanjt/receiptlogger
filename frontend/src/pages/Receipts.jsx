@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../hocs/AuthContext";
+import { Checkbox } from "@mui/material";
 
 const Receipts = () => {
   const [receipts, setReceipts] = useState([]);
@@ -65,6 +66,18 @@ const Receipts = () => {
     }
   }, []);
 
+  // reload receipts on 60 second intervals
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (user.is_staff) {
+        getAdminReceipts();
+      } else {
+        getReceipts();
+      }
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleStatusChange = (event, receiptId) => {
     // Send a request to update the status of the receipt
     axios
@@ -77,36 +90,103 @@ const Receipts = () => {
       .catch((error) => {
         console.error(error);
       });
+    if (user.is_staff) {
+      getAdminReceipts();
+    } else {
+      getReceipts();
+    }
+  };
+
+  // send a patch request to update the receipt reimbursement status
+  const handleReimbursementStatusChange = (event, receiptId) => {
+    axios
+      .patch(`/receipts/admin/set-reimbursed/${receiptId}/`, {
+        reimbursed: event.target.checked,
+      })
+      .then((response) => {
+        alert("Receipt reimbursement status updated successfully");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    if (user.is_staff) {
+      getAdminReceipts();
+    } else {
+      getReceipts();
+    }
   };
 
   return (
-    <div className="grid grid-cols-3 gap-4 py-16">
+    <div className="sm:grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-16">
       {receipts.map((receipt) => (
-        <div key={receipt.id} className="card border-black border-[1px]">
-          <h3>{receipt.username}</h3>
-          <p>{receipt.email}</p>
-          <p>{receipt.total_amount}</p>
-          <p>{receipt.reason}</p>
-          <p>{receipt.date}</p>
-          <img src={receipt.image} className="h-64" alt="receipt" />
-          <form>
-            <>
-              {user.admin && (
-                <label>
-                  Status:
-                  <select
-                    value={receipt.status}
-                    onChange={(event) => handleStatusChange(event, receipt.id)}
-                    className="form-select"
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="approved">Approved</option>
-                  </select>
-                </label>
-              )}
-            </>
-          </form>
+        <div key={receipt.id} className="bg-white rounded shadow p-6">
+          <div className="flex items-center mb-4">
+            <h3 className="text-2xl font-bold mr-2">{receipt.username}</h3>
+            <p className="text-xs lg:text-sm font-medium text-gray-600">
+              {receipt.email}
+            </p>
+          </div>
+          <div className="mb-4">
+            <p className="text-xl font-bold mb-2">
+              Total Amount: {receipt.total_amount}
+            </p>
+            <p className="text-base font-medium mb-2">
+              Reason: {receipt.reason}
+            </p>
+            <p className="text-base font-medium mb-2">Date: {receipt.date}</p>
+            <p className="text-xs font-medium mb-2">IBAN: {receipt.iban}</p>
+
+            {receipt.status === "pending" && (
+              <p className="text-base font-medium mb-2 text-yellow-500 uppercase">
+                {receipt.status}
+              </p>
+            )}
+            {receipt.status === "rejected" && (
+              <p className="text-base font-medium mb-2 text-red-500 uppercase">
+                {receipt.status}
+              </p>
+            )}
+            {receipt.status === "approved" && (
+              <p className="text-base font-medium mb-2 text-green-500 uppercase">
+                {receipt.status}
+              </p>
+            )}
+            <p className="text-xs font-medium mb-2">
+              Reimbursed: {receipt.reimbursed ? "Yes" : "No"}
+            </p>
+          </div>
+          <div className="mb-4">
+            <img
+              src={receipt.image}
+              className="h-48 object-cover rounded"
+              alt="receipt"
+            />
+          </div>
+          {user.admin && (
+            <form>
+              <label className="block font-medium text-sm mb-2">
+                Status:
+                <select
+                  value={receipt.status}
+                  onChange={(event) => handleStatusChange(event, receipt.id)}
+                  className="form-select w-full"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </label>
+              <label className="block font-medium text-sm mb-2">
+                Reimbursed:
+                <Checkbox
+                  checked={receipt.reimbursed}
+                  onChange={(event) =>
+                    handleReimbursementStatusChange(event, receipt.id)
+                  }
+                />
+              </label>
+            </form>
+          )}
         </div>
       ))}
     </div>
