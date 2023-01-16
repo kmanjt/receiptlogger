@@ -63,7 +63,7 @@ const Receipts = () => {
   // reload receipts on 60 second intervals
   useEffect(() => {
     const interval = setInterval(() => {
-      if (user.is_staff) {
+      if (user.admin === true) {
         getAdminReceipts();
       } else {
         getReceipts();
