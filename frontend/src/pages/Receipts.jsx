@@ -14,15 +14,9 @@ const Receipts = () => {
   axios.defaults.headers.common["Authorization"] =
     "Bearer " + authTokens.access;
 
-  // call a function conditionally if the user is an admin
-  if (user.is_staff) {
-    // call a function to get all receipts
-  } else {
-    // call a function to get the receipts of the logged in user
-  }
 
   let getAdminReceipts = async () => {
-    let response = await fetch("/receipts/all/", {
+    let response = await fetch("/receipts/admin/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -37,7 +31,7 @@ const Receipts = () => {
   };
 
   let getReceipts = async () => {
-    let response = await fetch("/receipts/admin/", {
+    let response = await fetch("/receipts/all/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -59,7 +53,7 @@ const Receipts = () => {
 
   // update the receipts when the page loads
   useEffect(() => {
-    if (user.is_staff) {
+    if (user.admin === true) {
       getAdminReceipts();
     } else {
       getReceipts();

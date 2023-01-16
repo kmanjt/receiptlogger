@@ -86,9 +86,9 @@ def register(request):
     if len(data['password']) < 5:
         return Response({'error': 'Password must be at least 5 characters'}, status=400)
     
-    # check if the IBAN is valid
-    if len(data['iban']) != 22:
-        return Response({'error': 'Invalid IBAN'}, status=400)
+    # check if the IBAN is Irish or Lithuanian
+    if not data['iban'].startswith('IE') and not data['iban'].startswith('LT'):
+        return Response({'error': 'Invalid IBAN, must be Irish or Lithuanian'}, status=400)
     
     # send an email to the user with their login credentials
     if not send_confirmation_email(data):

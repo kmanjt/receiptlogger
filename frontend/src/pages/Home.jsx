@@ -5,7 +5,7 @@ const Home = () => {
   const { contextData } = useContext(AuthContext);
   const { user } = contextData;
 
-  return <div>Welcome to the Enactus DCU Treasury Home {user?.username}!</div>;
+  return <div>Welcome to the Enactus DCU Treasury Home {user?.username}!</div>
 };
 
 export default Home;
