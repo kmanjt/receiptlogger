@@ -84,7 +84,7 @@ const Receipts = () => {
       .catch((error) => {
         console.error(error);
       });
-    if (user.is_staff) {
+    if (user.admin === true) {
       getAdminReceipts();
     } else {
       getReceipts();
@@ -103,7 +103,7 @@ const Receipts = () => {
       .catch((error) => {
         console.error(error);
       });
-    if (user.is_staff) {
+    if (user.admin === true) {
       getAdminReceipts();
     } else {
       getReceipts();
