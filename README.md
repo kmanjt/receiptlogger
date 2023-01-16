@@ -43,7 +43,7 @@ EMAIL_HOST_PASSWORD =
 EMAIL_HOST = 
 DEFAULT_FROM_EMAIL =
 ```
-2. Create a new virtual environment using `python3 -m venv env` and activate it using `source env/bin/activate`.
+2. Create a new virtual environment using `python3 -m venv env` and activate it using `env\Scripts\activate.bat`.
 3. Install the required packages using `pip install -r requirements.txt`.
 4. Create a new MySQL database and update the `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_HOST`, and `MYSQL_PORT` variables in the `.env` file with the corresponding values.
 5. Generate a Django secret key and update the `SECRET_KEY` variable in the `.env` file.
