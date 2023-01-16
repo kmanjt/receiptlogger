@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Link } from "react-router-dom";
 import AuthContext from "../hocs/AuthContext";
+import Enactus from "../assets/enactus.png";
 
 const pages = ["receipts"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -50,14 +51,16 @@ const Appbar = () => {
             aria-label="menu"
             sx={{ mr: 2 }}
           >
+            <Link to="/" style={{ textDecoration: "none" }}>
             <Box
               component="img"
               sx={{
                 height: 64,
               }}
               alt="Enactus Logo."
-              src="enactus.png"
+              src={Enactus}
             />
+            </Link>
           </IconButton>
           <Link to="/" style={{ textDecoration: "none" }}>
             <Typography
