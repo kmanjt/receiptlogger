@@ -30,15 +30,18 @@ const Register = () => {
     if (password !== confirmPassword) {
       // Display error message if passwords do not match
       alert("Passwords do not match");
+      resetForms();
       return;
     }
     if (iban !== confirmIban) {
       // Display error message if IBANs do not match
       alert("IBANs do not match");
+      resetForms();
       return;
     }
     if (username.length < 3) {
       alert("Username must be at least 3 characters long");
+      resetForms();
       return;
     }
 
@@ -69,9 +72,10 @@ const Register = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="username">Username:</label>
+    <form className="bg-white p-6 rounded-lg" onSubmit={handleSubmit}>
+      <label className="block font-medium text-gray-700 mb-2" htmlFor="username">Username:</label>
       <input
+        className="border border-gray-400 p-2 rounded w-full"
         type="text"
         id="username"
         value={username}
@@ -79,8 +83,9 @@ const Register = () => {
         onChange={(event) => setUsername(event.target.value)}
       />
       <br />
-      <label htmlFor="email">Email:</label>
+      <label className="block font-medium text-gray-700 mb-2" htmlFor="email">Email:</label>
       <input
+        className="border border-gray-400 p-2 rounded w-full"
         type="email"
         id="email"
         value={email}
@@ -88,8 +93,9 @@ const Register = () => {
         onChange={(event) => setEmail(event.target.value)}
       />
       <br />
-      <label htmlFor="password">Password:</label>
+      <label className="block font-medium text-gray-700 mb-2" htmlFor="password">Password:</label>
       <input
+        className="border border-gray-400 p-2 rounded w-full"
         type="password"
         id="password"
         value={password}
@@ -97,8 +103,9 @@ const Register = () => {
         onChange={(event) => setPassword(event.target.value)}
       />
       <br />
-      <label htmlFor="confirmPassword">Confirm Password:</label>
+      <label className="block font-medium text-gray-700 mb-2" htmlFor="confirmPassword">Confirm Password:</label>
       <input
+        className="border border-gray-400 p-2 rounded w-full"
         type="password"
         id="confirmPassword"
         value={confirmPassword}
@@ -106,8 +113,9 @@ const Register = () => {
         onChange={(event) => setConfirmPassword(event.target.value)}
       />
       <br />
-      <label htmlFor="iban">IBAN:</label>
+      <label className="block font-medium text-gray-700 mb-2" htmlFor="iban">IBAN:</label>
       <input
+        className="border border-gray-400 p-2 rounded w-full"
         type="text"
         id="iban"
         value={iban}
@@ -115,8 +123,9 @@ const Register = () => {
         onChange={(event) => setIban(event.target.value)}
       />
       <br />
-      <label htmlFor="confirmIban">Confirm IBAN:</label>
+      <label className="block font-medium text-gray-700 mb-2" htmlFor="confirmIban">Confirm IBAN:</label>
       <input
+        className="border border-gray-400 p-2 rounded w-full"
         type="text"
         id="confirmIban"
         value={confirmIban}
@@ -124,7 +133,7 @@ const Register = () => {
         onChange={(event) => setConfirmIban(event.target.value)}
       />
       <br />
-      <button type="submit">Register</button>
+      <button className="bg-indigo-500 text-white py-2 px-4 rounded-lg hover:bg-indigo-600 mt-4" type="submit">Register</button>
     </form>
   );
 };

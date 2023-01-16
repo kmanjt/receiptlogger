@@ -10,3 +10,5 @@
 /backend/client2.json
 /backend/api/__pycache__
 /backend/env
+/backend/api/migrations
+/backend/receipts/migrations
