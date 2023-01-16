@@ -48,10 +48,12 @@ DEFAULT_FROM_EMAIL =
 4. Create a new MySQL database and update the `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_HOST`, and `MYSQL_PORT` variables in the `.env` file with the corresponding values.
 5. Generate a Django secret key and update the `SECRET_KEY` variable in the `.env` file.
 6. Obtain Google Sheets API credentials and update the `GOOGLE_SHEETS_CLIENT_SECRET_PATH` and `GOOGLE_SHEET_ID` variables in the `.env` file with the corresponding values.
-7. Update the `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_HOST`, and `DEFAULT_FROM_EMAIL` variables in the `.env` file with the email account and host information that will be used to send confirmation emails.
-8. Run the following command to set up the database and create a superuser: `python manage.py migrate` and `python manage.py createsuperuser`.
-9. Start the development server using `python manage.py runserver`.
-10. Navigate to http://localhost:8000/ in your browser to view the app.
+7. Obtain service account secret credentials from the Google Cloud platform in the form of a JSON and place it in backend/ directory.
+8. Update the `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_HOST`, and `DEFAULT_FROM_EMAIL` variables in the `.env` file with the email account and host information that will be used to send confirmation emails.
+9. Run the following command to set up the database and create a superuser: `python manage.py migrate` and `python manage.py createsuperuser`.
+10. Start the development server using `python manage.py runserver`.
+11. Navigate to http://localhost:8000/ in your browser to view the app.
+
 
 ### For React Frontend:
 1. From the frontend/ directory, run npm install
