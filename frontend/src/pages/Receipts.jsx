@@ -79,16 +79,11 @@ const Receipts = () => {
         status: event.target.value,
       })
       .then((response) => {
-        alert("Receipt status updated successfully");
+        getAdminReceipts();
       })
       .catch((error) => {
         console.error(error);
       });
-    if (user.admin === true) {
-      getAdminReceipts();
-    } else {
-      getReceipts();
-    }
   };
 
   // send a patch request to update the receipt reimbursement status
@@ -98,16 +93,11 @@ const Receipts = () => {
         reimbursed: event.target.checked,
       })
       .then((response) => {
-        alert("Receipt reimbursement status updated successfully");
+        getAdminReceipts();
       })
       .catch((error) => {
         console.error(error);
       });
-    if (user.admin === true) {
-      getAdminReceipts();
-    } else {
-      getReceipts();
-    }
   };
 
   return (

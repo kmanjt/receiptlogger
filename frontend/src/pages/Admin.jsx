@@ -42,6 +42,25 @@ const Payments = () => {
         return () => clearInterval(interval);
     }, []);
 
+    // mark a payment as reimbursed
+    let markPaymentAsReimbursed = async (email) => {
+        let response = await fetch("/receipts/admin/reimburse-approved/", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + authTokens.access,
+            },
+            body: JSON.stringify({
+                email: email,
+            }),
+        });
+        let data = await response.json();
+        if (response.status === 200) {
+            getAdminPayments();
+        } else if (response.status === 401) {
+            alert("Payment could not be marked as reimbursed.");
+        }
+    };
 
 
   return (
@@ -61,6 +80,14 @@ const Payments = () => {
                     <td className="px-4 py-2">{payment.iban}</td>
                     <td className="px-4 py-2">{payment.email}</td>
                     <td className="px-4 py-2">{payment.total_due}</td>
+                    <td className="px-4 py-2">
+                        <button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            onClick={() => markPaymentAsReimbursed(payment.email)}
+                        >
+                            Mark as Reimbursed
+                        </button>
+                    </td>
                 </tr>
             ))}
         </tbody>

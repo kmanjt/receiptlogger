@@ -123,6 +123,26 @@ def update_receipt_status(request, receipt_id):
 
     return Response('Receipt status updated', status=200)
 
+# Mark every approved receipt for a user using their email as approved
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser])
+def mark_approved_receipts(request):
+    # Parse the JSON object from the PATCH request
+    try:
+        data = request.body
+        data = json.loads(data)
+    except json.decoder.JSONDecodeError:
+        return Response('Invalid request body', status=400)
+
+    # Get the receipts for the user
+    receipts = Receipt.objects.filter(email=data['email'], status='approved')
+
+    # Update the status of the receipts to 'marked'
+    for receipt in receipts:
+        receipt.reimbursed = True
+        receipt.save()
+
+    return Response('Receipts marked', status=200)
 
 # Add the approved receipts to the Google Sheet
 def add_approved_receipts_to_google_sheet(receipt):
@@ -205,6 +225,7 @@ def get_total_due(request):
         if receipt.status == 'approved' and receipt.reimbursed == False:
             if receipt.iban not in total_due:
                 total_due[receipt.iban] = {
+                    'uid': receipt.user.id,
                     'iban': receipt.iban,
                     'email': receipt.email,
                     'total_due': receipt.total_amount

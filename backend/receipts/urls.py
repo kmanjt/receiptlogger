@@ -14,5 +14,6 @@ urlpatterns = [
     path('delete/<int:receipt_id>/', views.delete_receipt, name='delete_receipt'), # Delete a receipt
      path('admin/get-total-due/', views.get_total_due, name='get_total_due'), # Get the total due for each user
      path('admin/set-reimbursed/<int:receipt_id>/', views.mark_reimbursed, name='mark_reimbursed'), # Set a receipt to reimbursed if admin')
+     path('admin/reimburse-approved/', views.mark_approved_receipts, name='mark_approved_receipts'), # Set all approved receipts for a user to reimbursed if admin
      
 ]
