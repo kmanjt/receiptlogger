@@ -197,21 +197,23 @@ def get_total_due(request):
     # Get all the receipts from the database
     receipts = Receipt.objects.all()
 
-    # Create a dictionary to store the total due for each user
+    # Create a dictionary which stores an iban key, email and total due for each user
     total_due = {}
 
-    # Iterate through the receipts and add the total amount to the total due for each user
+    # Iterate through through receipts and store an iban key, email and total due for each user
     for receipt in receipts:
-        # check if the receipt was approved
-        if receipt.status != 'approved':
-            continue
-        else:
-            if receipt.user.email in total_due:
-                total_due[receipt.user.email] += receipt.total_amount
+        if receipt.status == 'approved' and receipt.reimbursed == False:
+            if receipt.iban not in total_due:
+                total_due[receipt.iban] = {
+                    'iban': receipt.iban,
+                    'email': receipt.email,
+                    'total_due': receipt.total_amount
+                }
             else:
-                total_due[receipt.user.email] = receipt.total_amount
+                total_due[receipt.iban]['total_due'] += receipt.total_amount
+    newArray = [{'iban':key, 'email':value['email'], 'total_due': value['total_due']} for key, value in total_due.items()]
 
-    return Response(total_due, status=200)
+    return Response(newArray, status=200)
 
 # Admins mark a receipt as reimbursed
 @api_view(['PATCH'])

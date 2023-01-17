@@ -9,6 +9,7 @@ import PrivateRoute from "./hocs/PrivateRoute";
 import { AuthProvider } from "./hocs/AuthContext";
 import Appbar from "./components/Appbar";
 import icon from "./assets/favicon.ico";
+import Admin from "./pages/Admin";
 
 function App() {
   // set the favicon to the icon in the assets folder
@@ -42,6 +43,7 @@ function App() {
 
           <Route element={<PrivateRoute />}>
             <Route path="/receipts" element={<ReceiptSubmit />} />
+            <Route path="/admin" element={<Admin />} />
           </Route>
         </Routes>
       </AuthProvider>

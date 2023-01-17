@@ -156,6 +156,22 @@ const Appbar = () => {
                         </Button>
                       </Link>
                     </MenuItem>
+                    {user.admin && (
+                      <MenuItem key={"/admin"} onClick={handleCloseNavMenu}>
+                        <Link to="/admin" style={{ textDecoration: "none" }}>
+                          <Button
+                            key={"admin"}
+                            onClick={handleCloseNavMenu}
+                            color="primary"
+                            variant="contained"
+                            fullWidth
+                          >
+                            Admin
+                          </Button>
+                        </Link>
+                      </MenuItem>
+                    )}
+
                     <MenuItem key={"/logout"} onClick={handleCloseNavMenu}>
                       <Button
                         key={"logout"}
@@ -225,6 +241,18 @@ const Appbar = () => {
                       Receipts
                     </Button>
                   </Link>
+                  {user.admin && (
+                    <Link to="/admin" style={{ textDecoration: "none" }}>
+                      <Button
+                        key={"admin"}
+                        onClick={handleCloseNavMenu}
+                        sx={{ my: 2, color: "white", display: "block" }}
+                      >
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
+
                   <Button
                     key={"logout"}
                     onClick={logoutUser}
