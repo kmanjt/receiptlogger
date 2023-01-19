@@ -97,11 +97,11 @@ def create_receipt(request):
 
     return Response('Receipt created', status=201)
 
-def send_receipt_approved_email(receipt):
+def send_receipt_approved_email(receipt, status):
     # Create the email message
     message = EmailMessage(
-        subject='Enactus DCU Treasury - Receipt Approved',
-        body=f'Dear {receipt.username}, \n\nYour receipt for {receipt.total_amount} submitted on {receipt.date} has been approved by {receipt.status_updated_by.username}! \nIt is now due to be reimbursed. \n\nRegards, \nEnactus DCU Treasury.', 
+        subject='Enactus DCU Treasury - Receipt Update',
+        body=f'Dear {receipt.username}, \n\nYour receipt for {receipt.total_amount} submitted on {receipt.date} has been {status} by {receipt.status_updated_by.username}! \nIt is now due to be reimbursed. \n\nRegards, \nEnactus DCU Treasury.', 
         to = [receipt.email],
     )
 
@@ -133,13 +133,12 @@ def update_receipt_status(request, receipt_id):
     receipt.status_updated_by = User.objects.get(id=request.user.id)
     receipt.save()
 
+
     if receipt.status == 'approved' and old_status != 'approved':
         add_approved_receipts_to_google_sheet(receipt)
 
-        # Send an email to the user to notify them that their receipt was approved
-        send_receipt_approved_email(receipt)
         
-
+    send_receipt_approved_email(receipt, receipt.status)
 
     return Response('Receipt status updated', status=200)
 
