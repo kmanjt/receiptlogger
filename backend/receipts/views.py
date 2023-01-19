@@ -227,7 +227,7 @@ def get_all_receipts(request):
 
     serializer = ReceiptSerializer(receipts, many=True)
     
-    return Response(serializer.data)
+    return Response(serializer.data[::-1])
 
 @api_view(['GET'])
 @permission_classes([IsAdminUser]) 
@@ -235,8 +235,17 @@ def get_all_receipts_admin(request):
     receipts = Receipt.objects.all()
 
     serializer = ReceiptSerializer(receipts, many=True)
+
+    # show pending receipts first
+    pending_receipts = []
+    approved_receipts = []
+    for receipt in serializer.data:
+        if receipt['status'] == 'pending':
+            pending_receipts.append(receipt)
+        else:
+            approved_receipts.append(receipt)
     
-    return Response(serializer.data)
+    return Response(pending_receipts + approved_receipts)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
