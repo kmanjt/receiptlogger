@@ -98,10 +98,16 @@ def create_receipt(request):
     return Response('Receipt created', status=201)
 
 def send_receipt_approved_email(receipt, status):
+    if status == 'approved':
+        msg = f'Dear {receipt.username}, \n\nYour receipt for {receipt.total_amount} submitted on {receipt.date} has been {status} by {receipt.status_updated_by.username}! \nIt is now due to be reimbursed. \n\nRegards, \nEnactus DCU Treasury.'
+
+    elif status == 'rejected':
+        msg = f'Dear {receipt.username}, \n\nYour receipt for {receipt.total_amount} submitted on {receipt.date} has been {status} by {receipt.status_updated_by.username}! \n\nRegards, \nEnactus DCU Treasury.'
+
     # Create the email message
     message = EmailMessage(
         subject='Enactus DCU Treasury - Receipt Update',
-        body=f'Dear {receipt.username}, \n\nYour receipt for {receipt.total_amount} submitted on {receipt.date} has been {status} by {receipt.status_updated_by.username}! \nIt is now due to be reimbursed. \n\nRegards, \nEnactus DCU Treasury.', 
+        body=msg, 
         to = [receipt.email],
     )
 
