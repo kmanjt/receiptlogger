@@ -53,7 +53,7 @@ def is_dcu_email(email):
 # send an email to the user with their login credentials
 def send_confirmation_email(data):
     subject = 'Enactus DCU - Treasury Confirmation'
-    message = f'Hello {data["username"]},\n\nThank you for registering with the Enactus DCU Treasury!\n\nYour account has been created, you can now log in with the following credentials:\n\nUsername: {data["username"]}\nPassword: {data["password"]}\n\nRegards,\nEnactus DCU'
+    message = f'Hello {data["username"]},\n\nThank you for registering with the Enactus DCU Treasury!\n\nYour account has been created.\n\nRegards,\nEnactus DCU'
     from_email = os.getenv('EMAIL_HOST_USER')
     recipient_list = [f'{data["email"]}']
 
@@ -66,6 +66,8 @@ def send_confirmation_email(data):
         print(e)
         return False # email failed to send
     
+    # delete the email from the "sent" folder
+    email.delete()
 
 # register a new user account from a POST request
 @api_view(['POST'])

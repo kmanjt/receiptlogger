@@ -72,6 +72,19 @@ const Receipts = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const updateAdminNotes = (event, receiptId) => {
+    axios
+      .patch(`/receipts/admin/update-receipt-note/${receiptId}/`, {
+        admin_comment: event.target.value,
+      })
+      .then((response) => {
+        getAdminReceipts();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   const handleStatusChange = (event, receiptId) => {
     // Send a request to update the status of the receipt
     axios
@@ -155,7 +168,6 @@ const Receipts = () => {
                   onChange={(event) => handleStatusChange(event, receipt.id)}
                   className="form-select w-full"
                 >
-                  <option value="pending">Pending</option>
                   <option value="approved">Approved</option>
                   <option value="rejected">Rejected</option>
                 </select>
@@ -169,6 +181,18 @@ const Receipts = () => {
                   }
                 />
               </label>
+              <label className="block font-medium text-sm mb-2">
+                Admin Comment
+                <textarea
+                  value={receipt.admin_comment}
+                  className="form-textarea w-full border-gray-500 rounded-md shadow-sm"
+                  onChange={(event) =>
+                  updateAdminNotes(event, receipt.id)
+                }
+                />
+              </label>
+       
+              
             </form>
           )}
         </div>

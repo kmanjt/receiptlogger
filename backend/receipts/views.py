@@ -117,7 +117,25 @@ def send_receipt_approved_email(receipt, status):
     except:
         print('Failed to send email')
 
+# Allow admin to update the admin_comment field of a receipt
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser])
+def update_receipt_admin_note(request, receipt_id):
+    # Get the receipt object
+    receipt = get_object_or_404(Receipt, pk=receipt_id)
 
+    # Parse the JSON object from the PATCH request
+    try:
+        data = request.body
+        data = json.loads(data)
+    except json.decoder.JSONDecodeError:
+        return Response('Invalid request body', status=400)
+
+    # Update the receipt admin note
+    receipt.admin_comment = data['admin_comment']
+    receipt.save()
+
+    return Response('Admin note updated', status=200)
 
 # Update the receipt status and add the approved receipts to the Google Sheet
 @api_view(['PATCH'])
