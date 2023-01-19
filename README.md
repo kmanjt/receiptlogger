@@ -2,6 +2,8 @@
 
 This is a web app that allows users to submit receipts for approval, and administrators to review and approve the receipts. The app has a frontend built with React and a backend built with Django.
 
+This application was designed around use for college societies in Ireland, particularly the Enactus DCU society. As such, you will find references to 'Enactus DCU' in both the front and backend. For personal usage, these can be removed.
+
 ## Features
 
 - User registration and login using Simple JSON Web Tokens and Django REST Framework, with a confirmation email sent to all new sign ups.
