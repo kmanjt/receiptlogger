@@ -168,6 +168,7 @@ const Receipts = () => {
                   onChange={(event) => handleStatusChange(event, receipt.id)}
                   className="form-select w-full"
                 >
+                  <option value="pending">Pending</option>
                   <option value="approved">Approved</option>
                   <option value="rejected">Rejected</option>
                 </select>
