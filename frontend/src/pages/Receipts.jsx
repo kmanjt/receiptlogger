@@ -3,10 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../hocs/AuthContext";
 import { Checkbox } from "@mui/material";
+import { TiArrowUnsorted, TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 
 const Receipts = () => {
   const [receipts, setReceipts] = useState([]);
-  const [sorted, setSorted] = useState(false);
+  const [sorted, setSorted] = useState(['ascending', 'descending', 'unsorted'])
   let navigate = useNavigate();
   let { contextData } = useContext(AuthContext);
   let { user, authTokens, logoutUser } = contextData;
@@ -116,9 +117,9 @@ const Receipts = () => {
 
   // send a request to sort receipts by date
   const handleSort = () => {
-    if (sorted === false) {
+    if (!sorted) {
       axios
-        .get("/receipts/admin/sort-receipts/")
+        .get("/receipts/admin/sort_by_date/")
         .then((response) => {
           setReceipts(response.data);
           setSorted(true);
@@ -133,7 +134,24 @@ const Receipts = () => {
   };
 
   return (
-    <div className="sm:grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-16">
+    <>
+    <div className="container mx-auto px-4 m-auto pt-16">
+      <p className="text-md font-bold mb-4">Sort By Date
+      {!sorted ? (
+        <TiArrowUnsorted
+          className="text-2xl text-gray-600 cursor-pointer inline"
+          onClick={handleSort}
+        />
+      ) : (
+        <TiArrowSortedUp
+          className="text-2xl text-black cursor-pointer transform inline rotate-180"
+          onClick={handleSort}
+        />
+      )}
+      </p>
+    </div>
+    
+    <div className="sm:grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-2">
       {receipts.map((receipt) => (
         <div key={receipt.id} className="bg-white rounded shadow-2xl p-6">
           <div className="flex items-center mb-4">
@@ -219,6 +237,7 @@ const Receipts = () => {
         </div>
       ))}
     </div>
+    </>
   );
 };
 
