@@ -322,3 +322,19 @@ def get_receipts_by_date(request):
     sorted_receipts = sorted(serializer.data, key=lambda k: k['date'], reverse=True)
 
     return Response(sorted_receipts)
+
+# Return receipts sorted by date field for the user
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_receipts_by_date_user(request):
+    user = request.user
+
+    # return all receipts associated with the user
+    receipts = Receipt.objects.filter(user=user)
+
+    serializer = ReceiptSerializer(receipts, many=True)
+
+    # Sort the receipts by date
+    sorted_receipts = sorted(serializer.data, key=lambda k: k['date'], reverse=True)
+
+    return Response(sorted_receipts)

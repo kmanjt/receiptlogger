@@ -7,7 +7,7 @@ import { TiArrowUnsorted, TiArrowSortedDown, TiArrowSortedUp } from "react-icons
 
 const Receipts = () => {
   const [receipts, setReceipts] = useState([]);
-  const [sorted, setSorted] = useState(['ascending', 'descending', 'unsorted'])
+  const [sorted, setSorted] = useState(false);
   let navigate = useNavigate();
   let { contextData } = useContext(AuthContext);
   let { user, authTokens, logoutUser } = contextData;
@@ -116,7 +116,7 @@ const Receipts = () => {
   };
 
   // send a request to sort receipts by date
-  const handleSort = () => {
+  const handleSortAdmin = () => {
     if (!sorted) {
       axios
         .get("/receipts/admin/sort_by_date/")
@@ -132,6 +132,29 @@ const Receipts = () => {
       setSorted(false);
     }
   };
+
+  const handleSort = () => {
+    if (user.admin === true) {
+      handleSortAdmin();
+    } else {
+      if (!sorted) {
+        axios
+          .get("/receipts/sort_by_date/")
+          .then((response) => {
+            setReceipts(response.data);
+            setSorted(true);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } else {
+        getReceipts();
+        setSorted(false);
+      }
+    }
+  };
+
+
 
   return (
     <>
