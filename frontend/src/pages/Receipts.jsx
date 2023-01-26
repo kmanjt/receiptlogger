@@ -6,6 +6,7 @@ import { Checkbox } from "@mui/material";
 
 const Receipts = () => {
   const [receipts, setReceipts] = useState([]);
+  const [sorted, setSorted] = useState(false);
   let navigate = useNavigate();
   let { contextData } = useContext(AuthContext);
   let { user, authTokens, logoutUser } = contextData;
@@ -113,11 +114,30 @@ const Receipts = () => {
       });
   };
 
+  // send a request to sort receipts by date
+  const handleSort = () => {
+    if (sorted === false) {
+      axios
+        .get("/receipts/admin/sort-receipts/")
+        .then((response) => {
+          setReceipts(response.data);
+          setSorted(true);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      getAdminReceipts();
+      setSorted(false);
+    }
+  };
+
   return (
     <div className="sm:grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-16">
       {receipts.map((receipt) => (
         <div key={receipt.id} className="bg-white rounded shadow-2xl p-6">
           <div className="flex items-center mb-4">
+            
             <h3 className="text-2xl font-bold mr-2">{receipt.username}</h3>
             <p className="text-xs lg:text-sm font-medium text-gray-600">
               {receipt.email}

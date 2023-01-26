@@ -307,3 +307,18 @@ def mark_reimbursed(request, receipt_id):
     receipt.save()
 
     return Response('Receipt marked as reimbursed', status=200)
+
+
+# Return receipts sorted by the date field
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_receipts_by_date(request):
+    receipts = Receipt.objects.all()
+
+
+    serializer = ReceiptSerializer(receipts, many=True)
+
+    # Sort the receipts by date
+    sorted_receipts = sorted(serializer.data, key=lambda k: k['date'], reverse=True)
+
+    return Response(sorted_receipts)
