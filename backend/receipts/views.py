@@ -311,7 +311,7 @@ def mark_reimbursed(request, receipt_id):
 
 # Return receipts sorted by the date field
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def get_receipts_by_date(request):
     receipts = Receipt.objects.all()
 
