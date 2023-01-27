@@ -10,7 +10,7 @@ urlpatterns = [
     path('add_approved_receipts_to_google_sheet/', views.add_approved_receipts_to_google_sheet, 
          name='add_approved_receipts_to_google_sheet'), # Add the approved receipts to the Google Sheet
     path('all/', views.get_all_receipts, name='get_all_receipts'), # Get all receipts for a user
-    path('sort_by_date/', views.get_receipts_by_date, name='get_receipts_by_date'), # Get all receipts for by date
+    path('sort_by_date/', views.get_receipts_by_date_user, name='get_receipts_by_date'), # Get all receipts for by date
     path('admin/', views.get_all_receipts_admin, name='get_all_receipts_admin'), # Get all receipts as an admin
     path('delete/<int:receipt_id>/', views.delete_receipt, name='delete_receipt'), # Delete a receipt
      path('admin/get-total-due/', views.get_total_due, name='get_total_due'), # Get the total due for each user
