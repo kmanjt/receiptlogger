@@ -88,7 +88,7 @@ const Receipts = () => {
         admin_comment: event.target.value,
       })
       .then((response) => {
-        getAdminReceipts();
+        if (!sorted) getAdminReceipts();
       })
       .catch((error) => {
         console.error(error);
