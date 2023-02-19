@@ -338,3 +338,28 @@ def get_receipts_by_date_user(request):
     sorted_receipts = sorted(serializer.data, key=lambda k: k['date'], reverse=True)
 
     return Response(sorted_receipts)
+
+# Return the number of approved, pending and rejected receipts for the user
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_receipts_count(request):
+    user = request.user
+
+    # return all receipts associated with the user
+    receipts = Receipt.objects.filter(user=user)
+
+    serializer = ReceiptSerializer(receipts, many=True)
+
+    # Count the number of receipts
+    approved_receipts = 0
+    pending_receipts = 0
+    rejected_receipts = 0
+    for receipt in serializer.data:
+        if receipt['status'] == 'approved':
+            approved_receipts += 1
+        elif receipt['status'] == 'pending':
+            pending_receipts += 1
+        elif receipt['status'] == 'rejected':
+            rejected_receipts += 1
+
+    return Response({'approved': approved_receipts, 'pending': pending_receipts, 'rejected': rejected_receipts})
