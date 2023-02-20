@@ -98,8 +98,11 @@ def create_receipt(request):
     return Response('Receipt created', status=201)
 
 def send_receipt_approved_email(receipt, status):
-    if status == 'approved':
+    if status == 'approved' and receipt.income == False:
         msg = f'Dear {receipt.username}, \n\nYour receipt for {receipt.total_amount} submitted on {receipt.date} has been {status} by {receipt.status_updated_by.username}! \nIt is now due to be reimbursed. \n\nRegards, \nEnactus DCU Treasury.'
+
+    elif status == 'approved' and receipt.income == True:
+        msg = f'Dear {receipt.username}, \n\nYour receipt for {receipt.total_amount} submitted on {receipt.date} has been {status} by {receipt.status_updated_by.username}! \n\nRegards, \nEnactus DCU Treasury.'
 
     elif status == 'rejected':
         msg = f'Dear {receipt.username}, \n\nYour receipt for {receipt.total_amount} submitted on {receipt.date} has been {status} by {receipt.status_updated_by.username}! \n\nRegards, \nEnactus DCU Treasury.'
@@ -158,7 +161,7 @@ def update_receipt_status(request, receipt_id):
     receipt.save()
 
 
-    if receipt.status == 'approved' and old_status != 'approved':
+    if receipt.status == 'approved' and old_status != 'approved' and receipt.income == False:
         add_approved_receipts_to_google_sheet(receipt)
 
         
@@ -274,7 +277,7 @@ def get_total_due(request):
 
     # Iterate through through receipts and store an iban key, email and total due for each user
     for receipt in receipts:
-        if receipt.status == 'approved' and receipt.reimbursed == False:
+        if receipt.status == 'approved' and receipt.reimbursed == False and receipt.income == False:
             if receipt.iban not in total_due:
                 total_due[receipt.iban] = {
                     'uid': receipt.user.id,

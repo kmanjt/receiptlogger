@@ -23,6 +23,7 @@ class Receipt(models.Model):
     status_updated_at = models.DateTimeField(auto_now=True, editable=False)
     iban = models.CharField(max_length=255, null=True)
     reimbursed = models.BooleanField(default=False)
+    income = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.date}: {self.username} - {self.reason} - {self.total_amount}'
