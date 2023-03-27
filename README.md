@@ -1,8 +1,6 @@
 # Receipt Approval and Logging Application
 
-This is a web app that allows users to submit receipts for approval, and administrators to review and approve the receipts. The app has a frontend built with React and a backend built with Django.
-
-This application was designed around use for college societies in Ireland, particularly the Enactus DCU society. As such, you will find references to 'Enactus DCU' in both the front and backend. For personal usage, these can be removed.
+This web application is designed to streamline the process of submitting, reviewing, and approving receipts. It is specifically tailored to the needs of college societies in Ireland, such as the Enactus DCU society, but can be easily adapted for other use cases. The frontend is built with React, while the backend utilizes Django.
 
 ## Features
 
